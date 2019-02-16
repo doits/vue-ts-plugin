@@ -149,7 +149,13 @@ function init({ typescript: ts } : {typescript: typeof ts_module}) {
   }
 
   function getExternalFiles(project: ts_module.server.ConfiguredProject) {
-    return project.getFileNames().filter(interested);
+    const result = project.getFileNames().filter(interested);
+    project.projectService.openFiles.forEach((path, filename) => {
+      if (interested(filename)) {
+        result.push(ts.server.toNormalizedPath(filename));
+      }
+    });
+    return result;
   }
 }
 
